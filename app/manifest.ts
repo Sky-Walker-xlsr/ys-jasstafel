@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "YS-Jasstafel",
     short_name: "YS-Jasstafel",
-    description: "Punkte schreiben beim Schieber",
+    description: "Gratis Jasstafel für den Schieber – Open Source aus der Schweiz",
+    categories: ["games", "utilities"],
     lang: "de-CH",
     start_url: "/spiele",
     scope: "/",

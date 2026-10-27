@@ -3,6 +3,10 @@
   // Custom entry: wraps the OpenNext handler and adds the `scheduled` cron handler
   "main": "worker.ts",
   "name": "ys-jasstafel",
+  // Cloudflare account "yannicksalm.ch"
+  "account_id": "b7cc1bc9eeaec1c7dd4e9308c4c7cfc5",
+  // Custom domain: Cloudflare creates the DNS record and certificate
+  "routes": [{ "pattern": "jasstafel.yannicksalm.ch", "custom_domain": true }],
   "compatibility_date": "2026-04-21",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {

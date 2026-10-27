@@ -2,10 +2,10 @@
 // - Pages: network first, cache fallback (query ignored, so /spiel?id=… works offline)
 // - /_next/static, icons: cache first (file names are content-hashed)
 // - Supabase and other origins: untouched
-const VERSION = "v2";
+const VERSION = "v3";
 const PAGES = `jasstafel-pages-${VERSION}`;
 const ASSETS = `jasstafel-assets-${VERSION}`;
-const SHELL = ["/", "/spiele", "/spiel", "/login", "/registrieren", "/manifest.webmanifest", "/icon.svg"];
+const SHELL = ["/", "/spiele", "/spiel", "/login", "/registrieren", "/konto", "/manifest.webmanifest", "/icon.svg"];
 
 async function precache() {
   const pages = await caches.open(PAGES);

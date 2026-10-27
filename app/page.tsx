@@ -1,15 +1,64 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { IconCloud, IconGithub, IconList, IconPencil, IconPhone, IconStar, IconStrokes, IconWifiOff } from "@/components/Icons";
+import { IconCloud, IconGithub, IconList, IconMail, IconPencil, IconPhone, IconStar, IconStrokes, IconWifiOff } from "@/components/Icons";
 import Logo from "@/components/Logo";
+import { CONTACT_EMAIL, REPO_URL, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 import { ENTERED_KEY, LAST_GAME_KEY } from "@/lib/visit";
 
-const REPO_URL = "https://github.com/Sky-Walker-xlsr/ys-jasstafel";
-
 export const metadata: Metadata = {
-  title: "YS-Jasstafel – Punkte schreiben beim Schieber",
-  description: "YS-Jasstafel: die kostenlose Open-Source-Jasstafel für den Schieber. Ohne Anmeldung, funktioniert offline.",
+  title: { absolute: `${SITE_TITLE} | ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
 };
+
+const FAQ = [
+  {
+    q: "Ist die Jasstafel wirklich gratis?",
+    a: "Ja, komplett gratis: keine Kosten, keine Werbung, keine In-App-Käufe und kein Abo. YS-Jasstafel ist ein privates Projekt aus der Schweiz.",
+  },
+  {
+    q: "Ist YS-Jasstafel Open Source?",
+    a: "Ja. Der gesamte Quellcode ist öffentlich auf GitHub – jeder kann ihn ansehen, verbessern oder selbst betreiben.",
+  },
+  {
+    q: "Brauche ich ein Konto?",
+    a: "Nein. Ohne Anmeldung bleiben deine Spiele auf deinem Gerät gespeichert. Ein kostenloses Konto brauchst du nur, wenn du auf mehreren Geräten spielen oder deinen Verlauf in der Cloud sichern willst.",
+  },
+  {
+    q: "Für welche Jass-Variante ist die Tafel?",
+    a: "Für den Schieber, wie er in der Schweiz gespielt wird: 157 Punkte pro Runde, Match mit 257 Punkten, frei wählbarer Multiplikator, Weis auf dem Z sowie Striche für Sieg und Bergpreis.",
+  },
+  {
+    q: "Funktioniert die Jasstafel offline und als App?",
+    a: "Ja. Du kannst sie auf dem iPhone oder Android-Handy zum Homescreen hinzufügen und sie läuft auch ohne Internet – ideal für die Beiz oder die Berghütte.",
+  },
+];
+
+// Structured data for search engines: free web app + FAQ
+const JSON_LD = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: SITE_NAME,
+    alternateName: ["Jasstafel", "Gratis Jasstafel", "Schieber Jasstafel"],
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    applicationCategory: "GameApplication",
+    operatingSystem: "Web, iOS, Android",
+    inLanguage: "de-CH",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "CHF" },
+    author: { "@type": "Person", name: "Yannick Salm", url: "https://yannicksalm.ch" },
+    countryOfOrigin: { "@type": "Country", name: "Schweiz" },
+    codeRepository: REPO_URL,
+    image: `${SITE_URL}/og.png`,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+  },
+]).replace(/</g, "\\u003c");
 
 // Returning visitors skip the landing page and go straight to their last board.
 // Runs before the page paints; "/?info" shows the page anyway.
@@ -28,6 +77,7 @@ export default function Landing() {
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: REDIRECT }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON_LD }} />
       <main className="safe-top safe-x safe-bottom mx-auto max-w-5xl">
         <header className="flex items-center justify-between pt-5">
           <div className="flex items-center gap-3">
@@ -49,7 +99,7 @@ export default function Landing() {
           {/* mobile: centred, buttons edge to edge; desktop: left column */}
           <div className="text-center md:text-left">
             <ul className="flex flex-wrap justify-center gap-2 text-xs font-semibold md:justify-start" aria-label="Eigenschaften">
-              <li className="rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25">Kostenlos</li>
+              <li className="rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25">100 % gratis</li>
               <li>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25 hover:ring-mint/60">
                   <IconGithub width={14} height={14} />
@@ -57,10 +107,15 @@ export default function Landing() {
                 </a>
               </li>
               <li className="rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25">Ohne Anmeldung</li>
+              <li className="flex items-center gap-1.5 rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25">
+                <SwissFlag />
+                Aus der Schweiz
+              </li>
             </ul>
-            <h1 className="mt-5 text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl">Die Jasstafel für den Schieber.</h1>
+            <h1 className="mt-5 text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl">Die Gratis-Jasstafel für den Schieber.</h1>
             <p className="mx-auto mt-4 max-w-prose text-lg leading-relaxed text-chalk/75 md:mx-0">
-              Schreib Punkte, Weis und Striche wie auf der Kreidetafel – nur dass niemand mehr nachrechnen muss. Handy auf den Tisch, losspielen.
+              Schreib beim Jassen Punkte, Weis und Striche wie auf der Kreidetafel – nur dass niemand mehr nachrechnen muss. Komplett gratis, Open Source und ohne Werbung.
+              Handy auf den Tisch, losspielen.
             </p>
 
             <div className="mx-auto mt-8 w-full max-w-md space-y-3 md:mx-0">
@@ -85,7 +140,7 @@ export default function Landing() {
         {/* features */}
         <section aria-labelledby="features-title" className="pb-16">
           <h2 id="features-title" className="text-center text-2xl font-bold tracking-tight sm:text-left">
-            Was YS-Jasstafel kann
+            Was die Jasstafel kann
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map(({ icon: Icon, title, text }) => (
@@ -131,6 +186,51 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* feedback */}
+        <section aria-labelledby="feedback-title" className="pb-16">
+          <div className="rounded-2xl bg-tiber p-6 text-center ring-1 ring-mint/25 md:flex md:items-center md:gap-6 md:text-left">
+            <span className="mx-auto grid size-12 shrink-0 place-items-center rounded-xl bg-bg/40 text-mint md:mx-0">
+              <IconMail />
+            </span>
+            <div className="mt-4 md:mt-0 md:flex-1">
+              <h2 id="feedback-title" className="text-xl font-bold tracking-tight">
+                Ideen oder Fehler gefunden?
+              </h2>
+              <p className="mt-1.5 text-sm leading-relaxed text-chalk/80">
+                Verbesserungsvorschläge sind sehr willkommen – schreib einfach eine Mail an{" "}
+                <span className="font-semibold text-chalk">{CONTACT_EMAIL}</span>.
+              </p>
+            </div>
+            <a
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("YS-Jasstafel: Verbesserungsvorschlag")}`}
+              className="press mt-5 flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-mint px-5 font-semibold text-tiber-lo md:mt-0 md:w-auto"
+            >
+              <IconMail width={18} height={18} />
+              Vorschlag senden
+            </a>
+          </div>
+        </section>
+
+        {/* FAQ – same content as the FAQPage structured data */}
+        <section aria-labelledby="faq-title" className="pb-16">
+          <h2 id="faq-title" className="text-center text-2xl font-bold tracking-tight md:text-left">
+            Häufige Fragen
+          </h2>
+          <div className="mt-6 space-y-3">
+            {FAQ.map(({ q, a }) => (
+              <details key={q} className="group rounded-2xl bg-surface">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 font-semibold [&::-webkit-details-marker]:hidden">
+                  {q}
+                  <span aria-hidden className="text-xl leading-none text-mint transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="px-5 pb-5 text-sm leading-relaxed text-chalk/75">{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
         {/* mobile: stacked and centred; desktop: credit left, source right, disclaimer below */}
         <footer className="border-t border-line pt-6 pb-8 text-center text-sm md:text-left">
           <div className="flex flex-col items-center md:flex-row md:justify-between">
@@ -145,10 +245,30 @@ export default function Landing() {
               Quellcode auf GitHub
             </a>
           </div>
-          <p className="mt-4 text-xs text-muted/80">YS-Jasstafel ist kostenlos und Open Source. Keine Werbung, kein Tracking.</p>
+          <p className="mt-4 text-xs text-muted/80">
+            YS-Jasstafel ist kostenlos und Open Source. Keine Werbung, kein Tracking.
+            <span className="mt-2 block md:mt-0 md:ml-2 md:inline">
+              <Link href="/impressum" className="underline-offset-4 hover:underline">
+                Impressum
+              </Link>
+              {" · "}
+              <Link href="/datenschutz" className="underline-offset-4 hover:underline">
+                Datenschutz
+              </Link>
+            </span>
+          </p>
         </footer>
       </main>
     </>
+  );
+}
+
+function SwissFlag() {
+  return (
+    <svg viewBox="0 0 32 32" width={14} height={14} aria-hidden="true">
+      <rect width="32" height="32" rx="4" fill="#DA291C" />
+      <path d="M13 6h6v7h7v6h-7v7h-6v-7H6v-6h7z" fill="#fff" />
+    </svg>
   );
 }
 

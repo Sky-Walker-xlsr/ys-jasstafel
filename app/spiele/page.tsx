@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { IconCloud, IconPlus, IconTrash, IconTrophy, IconUser } from "@/components/Icons";
+import { IconBack, IconCloud, IconPlus, IconTrash, IconTrophy, IconUser } from "@/components/Icons";
 import Logo from "@/components/Logo";
 import NewGameDialog from "@/components/NewGameDialog";
 import { formatDateTime, formatPoints } from "@/lib/format";
 import { strokes, totals, winner } from "@/lib/scoring";
-import { createGame, deleteGame, signOut, useStore } from "@/lib/store";
+import { createGame, deleteGame, useStore } from "@/lib/store";
 import type { Game } from "@/lib/types";
 import { markEntered } from "@/lib/visit";
 
@@ -26,15 +26,15 @@ export default function Games() {
   return (
     <main className="safe-top safe-x mx-auto flex min-h-dvh max-w-xl flex-col">
       <header className="flex items-center justify-between pt-5 pb-4">
-        <div className="flex items-center gap-3">
+        <Link href="/?info" className="press -ml-1 flex items-center gap-3 rounded-xl px-1 py-1 active:bg-surface" aria-label="YS-Jasstafel – zur Startseite">
           <Logo />
           <h1 className="text-2xl font-bold tracking-tight">YS-Jasstafel</h1>
-        </div>
+        </Link>
         {store.cloud && (
           <Link
-            href={store.user ? "#konto" : "/login"}
+            href="/konto"
             className="press grid size-11 place-items-center rounded-full bg-surface text-muted"
-            aria-label={store.user ? "Konto" : "Anmelden"}
+            aria-label="Konto"
           >
             <IconUser width={22} height={22} />
           </Link>
@@ -87,16 +87,14 @@ export default function Games() {
           {!store.cloud ? (
             <p className="text-sm text-muted">Spiele werden auf diesem Gerät gespeichert.</p>
           ) : store.user ? (
-            <div className="flex items-center gap-3">
+            <Link href="/konto" className="press -m-2 flex items-center gap-3 rounded-xl p-2 active:bg-surface-2" aria-label="Konto verwalten">
               <IconCloud className="shrink-0 text-mint" />
               <div className="min-w-0 flex-1">
                 <div className="truncate font-medium">{store.user.email}</div>
                 <div className="text-xs text-muted">Spiele werden in der Cloud gespeichert</div>
               </div>
-              <button type="button" onClick={() => void signOut()} className="press h-11 rounded-xl bg-surface-2 px-4 text-sm font-semibold">
-                Abmelden
-              </button>
-            </div>
+              <IconBack width={20} height={20} className="shrink-0 rotate-180 text-muted" />
+            </Link>
           ) : (
             <div className="flex items-center gap-3">
               <p className="flex-1 text-sm text-muted">Nicht angemeldet – Spiele werden nur auf diesem Gerät gespeichert.</p>
@@ -107,9 +105,19 @@ export default function Games() {
           )}
           {store.error && <p className="mt-3 text-xs text-danger">{store.error}</p>}
         </div>
-        <Link href="/?info" className="mt-4 flex h-11 items-center justify-center text-sm text-muted underline-offset-4 hover:underline">
-          Über YS-Jasstafel
-        </Link>
+        <nav className="mt-4 flex items-center justify-center gap-1 text-sm text-muted" aria-label="Info">
+          <Link href="/?info" className="flex h-11 items-center px-2 underline-offset-4 hover:underline">
+            Über
+          </Link>
+          ·
+          <Link href="/impressum" className="flex h-11 items-center px-2 underline-offset-4 hover:underline">
+            Impressum
+          </Link>
+          ·
+          <Link href="/datenschutz" className="flex h-11 items-center px-2 underline-offset-4 hover:underline">
+            Datenschutz
+          </Link>
+        </nav>
       </section>
 
       {creating && (

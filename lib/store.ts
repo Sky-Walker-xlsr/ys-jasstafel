@@ -62,6 +62,8 @@ export interface StoreState {
   ready: boolean;
   /** Supabase configured */
   cloud: boolean;
+  /** Stored session checked (until then `user` may still be null for a signed-in user) */
+  authReady: boolean;
   user: { id: string; email: string | null } | null;
   games: Game[];
   /** Changes not yet saved to Supabase */
@@ -74,6 +76,7 @@ export interface StoreState {
 const serverState: StoreState = {
   ready: false,
   cloud: false,
+  authReady: false,
   user: null,
   games: [],
   pending: 0,
@@ -315,17 +318,44 @@ export async function signOut() {
   setUser(null);
 }
 
+/**
+ * Delete the account and all its cloud data (RPC `delete_my_account`, see init.sql).
+ * The games stay on this device as games without an account. Returns an error message or null.
+ */
+export async function deleteAccount(): Promise<string | null> {
+  const sb = getSupabase();
+  const uid = state.user?.id;
+  if (!sb || !uid) return null;
+  const { error } = await sb.rpc("delete_my_account");
+  if (error) return error.message;
+
+  const anon = read<Game[]>(gamesKey(null), []);
+  const known = new Set(anon.map((g) => g.id));
+  write(gamesKey(null), [...state.games.filter((g) => !known.has(g.id)), ...anon]);
+  outbox = [];
+  try {
+    localStorage.removeItem(gamesKey(uid));
+    localStorage.removeItem(outboxKey(uid));
+  } catch {}
+  await sb.auth.signOut({ scope: "local" });
+  setUser(null);
+  return null;
+}
+
 // ── init / subscribe ────────────────────────────────────────────────────
 
 function init() {
   if (initialized || typeof window === "undefined") return;
   initialized = true;
   const sb = getSupabase();
-  state = { ...state, ready: true, cloud: !!sb, games: read<Game[]>(gamesKey(null), []) };
+  state = { ...state, ready: true, cloud: !!sb, authReady: !sb, games: read<Game[]>(gamesKey(null), []) };
 
   if (sb) {
     // Restore the user's cache synchronously when a session is stored, to avoid a flash of local games
-    sb.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    sb.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      set({ authReady: true });
+    });
     sb.auth.onAuthStateChange((_event, session) => {
       // Defer: calling Supabase inside this callback can deadlock the auth lock
       setTimeout(() => setUser(session?.user ?? null), 0);

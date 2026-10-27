@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { takeAuthNext } from "@/lib/authErrors";
 import { getSupabase } from "@/lib/supabase";
 
 // OAuth / e-mail confirmation return URL. supabase-js exchanges the ?code= itself
@@ -16,8 +17,10 @@ export default function AuthCallback() {
     if (!sb) return router.replace("/spiele");
     const oauthError = new URLSearchParams(window.location.search).get("error");
 
+    const next = takeAuthNext("/spiele");
+
     sb.auth.getSession().then(({ data }) => {
-      if (data.session && !oauthError) router.replace("/spiele");
+      if (data.session && !oauthError) router.replace(next);
       else setFailed(true);
     });
   }, [router]);

@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { translateAuthError as translate } from "@/lib/authErrors";
+import { isValidPassword } from "@/lib/password";
 import { useStore } from "@/lib/store";
 import { getSupabase } from "@/lib/supabase";
 import { IconBack, IconGoogle } from "./Icons";
 import Logo from "./Logo";
+import PasswordRules from "./PasswordRules";
 
 type Mode = "signin" | "signup";
 
@@ -47,6 +50,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     e.preventDefault();
     const sb = getSupabase();
     if (!sb) return;
+    if (mode === "signup" && !isValidPassword(password)) return setError("Das Passwort erfüllt noch nicht alle Anforderungen.");
     setBusy(true);
     setError(null);
     setInfo(null);
@@ -114,12 +118,21 @@ export default function AuthForm({ mode }: { mode: Mode }) {
                 type="password"
                 autoComplete={mode === "signin" ? "current-password" : "new-password"}
                 required
-                minLength={6}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError(null);
+                }}
               />
-              {mode === "signup" && <span className="mt-1.5 block text-xs text-muted">Mindestens 6 Zeichen</span>}
+              {mode === "signup" && <PasswordRules password={password} />}
             </label>
+            {mode === "signin" && (
+              <div className="-mt-2 flex justify-end">
+                <Link href="/passwort-vergessen" className="flex h-11 items-center text-sm font-semibold text-mint">
+                  Passwort vergessen?
+                </Link>
+              </div>
+            )}
 
             {error && (
               <p role="alert" className="text-sm text-danger">
@@ -135,6 +148,15 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             <button type="submit" disabled={busy} className="press h-14 w-full rounded-2xl bg-mint text-lg font-semibold text-tiber-lo disabled:opacity-50">
               {busy ? "Bitte warten …" : t.submit}
             </button>
+            {mode === "signup" && (
+              <p className="text-center text-xs text-muted">
+                Mit der Registrierung gilt die{" "}
+                <Link href="/datenschutz" className="font-semibold text-chalk/80 underline underline-offset-4">
+                  Datenschutzerklärung
+                </Link>
+                .
+              </p>
+            )}
           </form>
 
           <Link href={mode === "signin" ? "/registrieren" : "/login"} replace className="mt-4 flex h-11 items-center justify-center text-sm text-muted">
@@ -159,14 +181,4 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       )}
     </main>
   );
-}
-
-function translate(msg: string) {
-  if (/invalid login credentials/i.test(msg)) return "E-Mail oder Passwort ist falsch.";
-  if (/email not confirmed/i.test(msg)) return "Bitte bestätige zuerst deine E-Mail-Adresse.";
-  if (/already registered/i.test(msg)) return "Für diese E-Mail gibt es bereits ein Konto.";
-  if (/password should be at least/i.test(msg)) return "Das Passwort ist zu kurz.";
-  if (/rate limit/i.test(msg)) return "Zu viele Versuche. Bitte warte einen Moment.";
-  if (/fetch/i.test(msg)) return "Keine Verbindung. Bitte später erneut versuchen.";
-  return msg;
 }
