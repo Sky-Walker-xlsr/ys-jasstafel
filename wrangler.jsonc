@@ -17,6 +17,10 @@
   "triggers": {
     "crons": ["0 3 * * 1"]
   },
-  "observability": { "enabled": true }
-  // Secrets (wrangler secret put): SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+  "observability": { "enabled": true },
+  // Used by the heartbeat cron in worker.ts (not secret)
+  "vars": {
+    "SUPABASE_URL": "https://bpltkzvidnktxkgffxjf.supabase.co"
+  }
+  // Secret (wrangler secret put): SUPABASE_SERVICE_ROLE_KEY
 }
