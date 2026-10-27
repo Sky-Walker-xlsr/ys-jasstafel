@@ -46,8 +46,9 @@ export default function Landing() {
 
         {/* hero */}
         <section className="grid items-center gap-12 pt-10 pb-16 md:grid-cols-[1.15fr_0.85fr] md:pt-16">
-          <div>
-            <ul className="flex flex-wrap gap-2 text-xs font-semibold" aria-label="Eigenschaften">
+          {/* mobile: centred, buttons edge to edge; desktop: left column */}
+          <div className="text-center md:text-left">
+            <ul className="flex flex-wrap justify-center gap-2 text-xs font-semibold md:justify-start" aria-label="Eigenschaften">
               <li className="rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25">Kostenlos</li>
               <li>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25 hover:ring-mint/60">
@@ -58,20 +59,20 @@ export default function Landing() {
               <li className="rounded-full bg-tiber px-3 py-1.5 text-mint ring-1 ring-mint/25">Ohne Anmeldung</li>
             </ul>
             <h1 className="mt-5 text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl">Die Jasstafel für den Schieber.</h1>
-            <p className="mt-4 max-w-prose text-lg leading-relaxed text-chalk/75">
+            <p className="mx-auto mt-4 max-w-prose text-lg leading-relaxed text-chalk/75 md:mx-0">
               Schreib Punkte, Weis und Striche wie auf der Kreidetafel – nur dass niemand mehr nachrechnen muss. Handy auf den Tisch, losspielen.
             </p>
 
-            <div className="mt-8 max-w-md space-y-3">
-              <Link href="/spiele" className="press flex h-14 items-center justify-center rounded-2xl bg-mint text-lg font-semibold text-tiber-lo">
-                Ohne Account spielen
+            <div className="mx-auto mt-8 w-full max-w-md space-y-3 md:mx-0">
+              <Link href="/registrieren" className="press flex h-14 items-center justify-center rounded-2xl bg-mint text-lg font-semibold text-tiber-lo">
+                Registrieren
               </Link>
               <div className="grid grid-cols-2 gap-3">
-                <Link href="/registrieren" className="press flex h-12 items-center justify-center rounded-2xl bg-tiber font-semibold text-chalk ring-1 ring-mint/30 active:bg-tiber-hi">
-                  Registrieren
-                </Link>
-                <Link href="/login" className="press flex h-12 items-center justify-center rounded-2xl border border-line font-semibold text-chalk/90 active:bg-surface">
+                <Link href="/login" className="press flex h-12 items-center justify-center rounded-2xl bg-tiber font-semibold text-chalk ring-1 ring-mint/30 active:bg-tiber-hi">
                   Login
+                </Link>
+                <Link href="/spiele" className="press flex h-12 items-center justify-center rounded-2xl border border-line px-2 text-[15px] font-semibold whitespace-nowrap text-chalk/90 active:bg-surface">
+                  Ohne Account spielen
                 </Link>
               </div>
               <p className="pt-1 text-sm text-muted">Kein Konto nötig – deine Spiele bleiben auf diesem Gerät gespeichert.</p>
@@ -83,13 +84,13 @@ export default function Landing() {
 
         {/* features */}
         <section aria-labelledby="features-title" className="pb-16">
-          <h2 id="features-title" className="text-2xl font-bold tracking-tight">
+          <h2 id="features-title" className="text-center text-2xl font-bold tracking-tight sm:text-left">
             Was YS-Jasstafel kann
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="rounded-2xl bg-surface p-5">
-                <span className="grid size-10 place-items-center rounded-xl bg-tiber text-mint">
+              <li key={title} className="rounded-2xl bg-surface p-5 text-center sm:text-left">
+                <span className="mx-auto grid size-10 place-items-center rounded-xl bg-tiber text-mint sm:mx-0">
                   <Icon width={20} height={20} />
                 </span>
                 <h3 className="mt-4 font-semibold">{title}</h3>
@@ -101,12 +102,12 @@ export default function Landing() {
 
         {/* data */}
         <section aria-labelledby="data-title" className="pb-16">
-          <h2 id="data-title" className="text-2xl font-bold tracking-tight">
+          <h2 id="data-title" className="text-center text-2xl font-bold tracking-tight md:text-left">
             Deine Spiele bleiben gespeichert
           </h2>
           <div className="mt-6 grid gap-3 md:grid-cols-2">
-            <div className="rounded-2xl bg-surface p-5">
-              <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-surface p-5 text-center md:text-left">
+              <div className="flex items-center justify-center gap-3 md:justify-start">
                 <IconPhone className="text-mint" />
                 <h3 className="font-semibold">Ohne Konto</h3>
               </div>
@@ -114,8 +115,8 @@ export default function Landing() {
                 Einfach öffnen und spielen. Alle Spiele werden auf deinem Gerät gespeichert und sind auch nach dem Schliessen noch da.
               </p>
             </div>
-            <div className="rounded-2xl bg-tiber p-5 ring-1 ring-mint/25">
-              <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-tiber p-5 text-center ring-1 ring-mint/25 md:text-left">
+              <div className="flex items-center justify-center gap-3 md:justify-start">
                 <IconCloud className="text-mint" />
                 <h3 className="font-semibold">Mit Konto</h3>
               </div>
@@ -123,22 +124,28 @@ export default function Landing() {
                 Für mehrere Geräte oder wenn dein Verlauf sicher sein soll: Mit einem Konto werden deine Spiele in der Cloud gesichert. Was du vorher ohne Konto
                 gespielt hast, wird beim ersten Login übernommen. Du meldest dich nur einmal an.
               </p>
-              <Link href="/registrieren" className="press mt-4 inline-flex h-11 items-center rounded-xl bg-mint px-4 text-sm font-semibold text-tiber-lo">
+              <Link href="/registrieren" className="press mt-4 flex h-12 w-full items-center justify-center rounded-xl bg-mint px-4 font-semibold text-tiber-lo md:inline-flex md:h-11 md:w-auto md:text-sm">
                 Konto erstellen
               </Link>
             </div>
           </div>
         </section>
 
-        <footer className="flex flex-col items-center gap-4 border-t border-line py-10 text-center">
-          <p className="max-w-md text-sm text-muted">YS-Jasstafel ist kostenlos und Open Source. Keine Werbung, kein Tracking.</p>
-          <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="flex h-11 items-center gap-2 text-sm font-semibold text-chalk/80 underline-offset-4 hover:underline">
-            <IconGithub width={18} height={18} />
-            Quellcode auf GitHub
-          </a>
-          <Link href="/spiele" className="press flex h-12 items-center rounded-2xl bg-mint px-6 font-semibold text-tiber-lo">
-            Jetzt spielen
-          </Link>
+        {/* mobile: stacked and centred; desktop: credit left, source right, disclaimer below */}
+        <footer className="border-t border-line pt-6 pb-8 text-center text-sm md:text-left">
+          <div className="flex flex-col items-center md:flex-row md:justify-between">
+            <p className="flex h-11 items-center text-muted">
+              Gebaut von&nbsp;
+              <a href="https://yannicksalm.ch" target="_blank" rel="noopener noreferrer" className="font-semibold text-chalk/80 underline-offset-4 hover:underline">
+                Yannick Salm
+              </a>
+            </p>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="flex h-11 items-center gap-2 font-semibold text-chalk/80 underline-offset-4 hover:underline">
+              <IconGithub width={18} height={18} />
+              Quellcode auf GitHub
+            </a>
+          </div>
+          <p className="mt-4 text-xs text-muted/80">YS-Jasstafel ist kostenlos und Open Source. Keine Werbung, kein Tracking.</p>
         </footer>
       </main>
     </>
