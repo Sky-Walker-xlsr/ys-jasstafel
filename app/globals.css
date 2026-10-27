@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* Jasstafel design tokens – dark only.
+   Frame #242424, chalkboard = Tiber #06392F, chalk marks, gold for Match/Sieg. */
+@theme {
+  --color-bg: #242424;
+  --color-surface: #2e2e2e;
+  --color-surface-2: #383838;
+  --color-line: rgb(255 255 255 / 0.09);
+
+  --color-tiber: #06392f;
+  --color-tiber-hi: #0a4c3f;
+  --color-tiber-lo: #042a23;
+
+  --color-chalk: #f2efe6;
+  --color-muted: #a8a49b;
+  --color-mint: #6fd8b0;
+  --color-gold: #e6b54f;
+  --color-danger: #f0776c;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-quick: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-chalk);
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1, "cv11" 1;
+  touch-action: manipulation;
+}
+
+/* The board is a fixed, non-scrolling surface */
+.board-lock {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Chalkboard: subtle light lift on Tiber */
+.chalkboard {
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgb(255 255 255 / 0.05), transparent 60%),
+    var(--color-tiber);
+}
+
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+/* Horizontal gutter of 1rem, more on devices with side insets (landscape notch) */
+.safe-x {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-mint);
+  outline-offset: 2px;
+}
+
+.press {
+  transition: transform 120ms var(--ease-out-quick), background-color 150ms, opacity 150ms;
+}
+.press:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+@keyframes sheet-in {
+  from { transform: translateY(16px); opacity: 0; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+.anim-sheet { animation: sheet-in 220ms var(--ease-out-quick); }
+.anim-fade { animation: fade-in 180ms ease-out; }
+
+@keyframes slide-in {
+  from { transform: translateX(100%); }
+}
+.anim-slide { animation: slide-in 260ms var(--ease-out-quick); }
+
+@keyframes pop {
+  0% { opacity: 0; transform: translateY(6px); }
+  20% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+.anim-pop { animation: pop 700ms var(--ease-out-quick) forwards; transform-box: fill-box; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

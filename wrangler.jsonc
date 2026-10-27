@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Custom entry: wraps the OpenNext handler and adds the `scheduled` cron handler
+  "main": "worker.ts",
+  "name": "ys-jasstafel",
+  "compatibility_date": "2026-04-21",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Weekly heartbeat (Monday 03:00 UTC) so the Supabase free tier doesn't pause
+  "triggers": {
+    "crons": ["0 3 * * 1"]
+  },
+  "observability": { "enabled": true }
+  // Secrets (wrangler secret put): SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+}
