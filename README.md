@@ -2,6 +2,10 @@
 
 Mobile PWA zum Punkteschreiben beim Schieber. Next.js 16 (App Router) · Supabase · Cloudflare Workers (OpenNext).
 
+<p align="center">
+  <img src="docs/board.png" alt="YS-Jasstafel: geteilte Tafel mit Z, Strichen und Punktestand beider Teams" width="280">
+</p>
+
 ## Setup
 
 1. **Supabase**: `supabase/init.sql` im SQL-Editor ausführen (komplettes Setup, mehrfach ausführbar).
