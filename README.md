@@ -2,6 +2,16 @@
 
 Mobile PWA zum Punkteschreiben beim Schieber. Next.js 16 (App Router) · Supabase · Cloudflare Workers (OpenNext).
 
+<div align="center">
+
+[![Status](https://img.shields.io/badge/status-early%20access-blueviolet?style=flat-square)](mailto:yannick.salm@outlook.de)
+[![Stack](https://img.shields.io/badge/Next.js-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
+[![Feedback](https://img.shields.io/badge/feedback-very%20welcome-brightgreen?style=flat-square)](mailto:yannick.salm@outlook.de)
+
+</div>
+
 <p align="center">
   <img src="docs/board.png" alt="YS-Jasstafel: geteilte Tafel mit Z, Strichen und Punktestand beider Teams" width="280">
 </p>
