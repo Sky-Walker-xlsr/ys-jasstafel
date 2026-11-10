@@ -33,9 +33,9 @@ create table if not exists public.rounds (
 );
 create index if not exists rounds_game_idx on public.rounds (game_id, round_no);
 
--- ── heartbeat (written by the weekly Worker cron with the service role) ──
+-- ── heartbeat (one row per day, written by the daily Worker cron with the service role) ──
 create table if not exists public.heartbeat (
-  id         bigint generated always as identity primary key,
+  day        date primary key,
   created_at timestamptz not null default now()
 );
 

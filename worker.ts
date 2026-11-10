@@ -9,10 +9,15 @@ interface Env {
 
 const KEEP_DAYS = 30;
 
+/** YYYY-MM-DD in Europe/Zurich, `offsetDays` relative to today. */
+function zurichDate(offsetDays = 0): string {
+  const d = new Date(Date.now() + offsetDays * 86_400_000);
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zurich" }).format(d);
+}
+
 async function heartbeat(env: Env) {
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("heartbeat: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY missing");
-    return;
+    throw new Error("heartbeat: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY missing");
   }
   const base = `${env.SUPABASE_URL.replace(/\/$/, "")}/rest/v1/heartbeat`;
   const headers = {
@@ -20,27 +25,33 @@ async function heartbeat(env: Env) {
     Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
     "Content-Type": "application/json",
   };
+  const today = zurichDate(0);
+  const yesterday = zurichDate(-1);
 
-  // 1. write
-  const ins = await fetch(base, {
+  // 1. write today's date (upsert: a second run on the same day is harmless)
+  const ins = await fetch(`${base}?on_conflict=day`, {
     method: "POST",
-    headers: { ...headers, Prefer: "return=minimal" },
-    body: "{}",
+    headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ day: today, created_at: new Date().toISOString() }),
   });
-  if (!ins.ok) throw new Error(`heartbeat insert ${ins.status}: ${await ins.text()}`);
+  if (!ins.ok) throw new Error(`heartbeat upsert ${ins.status}: ${await ins.text()}`);
 
-  // 2. read
-  const sel = await fetch(`${base}?select=id,created_at&order=created_at.desc&limit=5`, { headers });
-  const rows = sel.ok ? await sel.json() : [];
+  // 2. read yesterday's entry
+  const sel = await fetch(`${base}?select=day,created_at&day=eq.${yesterday}`, { headers });
+  if (!sel.ok) throw new Error(`heartbeat select ${sel.status}: ${await sel.text()}`);
+  const rows = (await sel.json()) as { day: string; created_at: string }[];
+  if (rows.length === 0) console.warn(`heartbeat: no entry for yesterday (${yesterday})`);
 
   // 3. delete old entries
-  const cutoff = new Date(Date.now() - KEEP_DAYS * 86_400_000).toISOString();
-  const del = await fetch(`${base}?created_at=lt.${encodeURIComponent(cutoff)}`, {
+  const cutoff = zurichDate(-KEEP_DAYS);
+  const del = await fetch(`${base}?day=lt.${cutoff}`, {
     method: "DELETE",
     headers: { ...headers, Prefer: "return=minimal" },
   });
 
-  console.log(`heartbeat ok: latest=${JSON.stringify(rows[0])} delete=${del.status}`);
+  console.log(
+    `heartbeat ok: today=${today} yesterday=${rows[0] ? rows[0].created_at : "missing"} delete=${del.status}`,
+  );
 }
 
 export default {

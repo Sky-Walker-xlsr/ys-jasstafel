@@ -13,9 +13,9 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  // Weekly heartbeat (Monday 03:00 UTC) so the Supabase free tier doesn't pause
+  // Daily heartbeat (03:00 UTC) so the Supabase free tier doesn't pause
   "triggers": {
-    "crons": ["0 3 * * 1"]
+    "crons": ["0 3 * * *"]
   },
   "observability": { "enabled": true },
   // Used by the heartbeat cron in worker.ts (not secret)

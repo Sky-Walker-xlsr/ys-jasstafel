@@ -52,4 +52,4 @@ npm run icons     # PWA-Icons neu generieren
 - `lib/store.ts` – Spielstand: localStorage-Cache, mit Login zusätzlich Outbox → Supabase (offline-fähig); lokale Spiele werden beim ersten Login hochgeladen
 - `components/Board.tsx` – Tafel: untere Hälfte Team A, obere Hälfte Team B (180° gedreht), Mittellinie mit Menü / Verlauf / Rückgängig
 - `public/sw.js` – Service Worker (Seiten network-first, Assets cache-first)
-- `worker.ts` – Custom Worker-Entry: OpenNext-`fetch` + `scheduled`-Handler (Cron `0 3 * * 1` schreibt/liest/löscht `heartbeat`)
+- `worker.ts` – Custom Worker-Entry: OpenNext-`fetch` + `scheduled`-Handler (Cron `0 3 * * *`: schreibt das heutige Datum in `heartbeat`, liest den gestrigen Eintrag, löscht Einträge älter als 30 Tage)
